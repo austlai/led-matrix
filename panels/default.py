@@ -109,7 +109,6 @@ def set_datetime(frame, theme, show_day):
 
     if (theme['border']):
         draw.rectangle(((tpos[0] - 2, tpos[1] - 2), (tpos[0] + 18, tpos[1] + 6)), black)
-        draw.rectangle(((dpos[0] - 2, dpos[1] - 2), (dpos[0] + 18, dpos[1] + 6)), black)
 
     draw.text(tpos, padNum(hours), theme['primary'], font=font)
     draw.text((tpos[0] + 7, tpos[1]), ":", theme['primary'], font=font)
