@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Mock LED Matrix Display</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        document.addEventListener("DOMContentLoaded", function() {
+            var socket = io()
+
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });
+
+            socket.on('background_resp', function(msg, cb) {
+                frame = `data:image/png;base64,${String.fromCharCode(...new Uint8Array(msg.frame))}`;
+                document.getElementById('frame').src = frame;
+                if (cb)
+                    cb();
+            });
+        });
+    </script>
+    <style>
+        div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        img {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            width: 90%;
+            border: 5px solid black;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <img id="frame" src=""/>
+    </div>
+</body>
+</html>

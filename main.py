@@ -1,0 +1,72 @@
+import sys
+import os
+import time
+import configparser
+from PIL import Image
+
+from panels import default
+
+def main():
+    brightness = 100
+    displayOn = True
+
+    config = configparser.ConfigParser()
+    parsed_configs = config.read('../config')
+    if len(parsed_configs) == 0:
+        print("no config file found")
+        # sys.exit()
+
+    canvas_width = 64
+    canvas_height = 32
+
+    black_screen = Image.new("RGB", (canvas_width, canvas_height), (0,0,0))
+
+    # modules =   {
+    #                 'weather' : weather_module.WeatherModule(config),
+    #                 'notifications' : notification_module.NotificationModule(config),
+    #                 'spotify' : spotify_module.SpotifyModule(config)
+    #             }
+
+    # app_list = [main_screen.MainScreen(config, modules, callbacks),
+    #             notion_v2.NotionScreen(config, modules, callbacks),
+    #             weather.WeatherScreen(config, modules, callbacks),
+    #             subcount.SubcountScreen(config, modules, callbacks),
+    #             gif_viewer.GifScreen(config, modules, callbacks),
+    #             life.GameOfLifeScreen(config, modules, callbacks),
+    #             spotify_player.SpotifyScreen(config, modules, callbacks)]
+    app_list = [default.MainScreen(config)]
+
+    currentdir = os.getcwd()
+    sys.path.append(currentdir+"/rpi-rgb-led-matrix/bindings/python")
+    print(currentdir)
+    from rgbmatrix import RGBMatrix, RGBMatrixOptions
+
+    options = RGBMatrixOptions()
+    options.rows = 32
+    options.cols = 64
+    options.chain_length = 1
+    options.parallel = 1
+    options.brightness = brightness
+    options.pixel_mapper_config = "U-mapper;Rotate:180"
+    options.gpio_slowdown = 1
+    options.pwm_lsb_nanoseconds = 80
+    options.limit_refresh_rate_hz = 150
+    options.hardware_mapping = 'adafruit-hat'  # If you have an Adafruit HAT: 'adafruit-hat'
+    options.drop_privileges = False
+    matrix = RGBMatrix(options = options)
+
+    while(True):
+        frame = app_list[0].generate()
+        if not displayOn:
+            frame = black_screen
+
+        #matrix.brightness = 100
+        matrix.SetImage(frame)
+        time.sleep(0.05)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('Interrupted with Ctrl-C')
+        sys.exit(0)
