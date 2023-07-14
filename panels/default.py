@@ -13,6 +13,8 @@ orange_tinted_white = (248,237,235)
 black = (0, 0, 0)
 dark_red = (46, 0, 51)
 
+cyan = (69, 178, 186)
+
 washed_out_navy = (109,104,117)
 
 discordColor = (150,170,255)
@@ -38,6 +40,7 @@ class Default:
                 'datepos': (23, 6),
                 'primary': light_pink,
                 'secondary': dark_pink,
+                'border': False,
             },
             'cat' : {
                 'image': 'res/cat.jpg',
@@ -45,6 +48,7 @@ class Default:
                 'datepos': (23, 6),
                 'primary': light_pink,
                 'secondary': dark_pink,
+                'border': False,
             },
             'dm' : {
                 'image': 'res/dm.jpg',
@@ -52,6 +56,7 @@ class Default:
                 'datepos': (23, 6),
                 'primary': light_pink,
                 'secondary': dark_pink,
+                'border': False,
             },
             'flowers' : {
                 'image': 'res/flowers.jpg',
@@ -59,13 +64,15 @@ class Default:
                 'datepos': (23, 6),
                 'primary': light_pink,
                 'secondary': dark_pink,
+                'border': False,
             },
             'ponyo' : {
                 'image': 'res/ponyo.jpg',
                 'timepos': (5, 6),
                 'datepos': (3, 12),
-                'primary': dark_red,
-                'secondary': black,
+                'primary': white,
+                'secondary': cyan,
+                'border': True,
             },
         }
 
@@ -90,7 +97,7 @@ def set_datetime(frame, theme, show_day):
     currentTime = datetime.now()
     month = currentTime.month
     day = currentTime.day
-    dayOfWeek = currentTime.strftime("%A")[:3]
+    dayOfWeek = currentTime.strftime("%A")[:3].upper()
     hours = currentTime.hour
     minutes = currentTime.minute
 
@@ -99,6 +106,10 @@ def set_datetime(frame, theme, show_day):
 
     tpos = theme['timepos']
     dpos = theme['datepos']
+
+    if (theme['border']):
+        draw.rectangle(((tpos[0] - 1, tpos[1] - 1), (tpos[0] + 17, tpos[1] + 5)), black)
+        draw.rectangle(((dpos[0] - 1, dpos[1] - 1), (dpos[0] + 17, dpos[1] + 5)), black)
 
     draw.text(tpos, padNum(hours), theme['primary'], font=font)
     draw.text((tpos[0] + 7, tpos[1]), ":", theme['primary'], font=font)
