@@ -8,7 +8,7 @@ from panels import default
 from modules import timedate
 
 def main():
-    brightness = 100
+    brightness = 50
     displayOn = True
 
     config = configparser.ConfigParser()
@@ -20,7 +20,7 @@ def main():
     canvas_width = 64
     canvas_height = 32
 
-    black_screen = Image.new("RGB", (canvas_width, canvas_height), (0,0,0))
+    empty = Image.new("RGB", (canvas_width, canvas_height), (0,0,0))
 
     modules = {
         'timedate': timedate.TimeDate(config),
@@ -45,12 +45,9 @@ def main():
     options = RGBMatrixOptions()
     options.rows = 32
     options.cols = 64
-    options.chain_length = 1
-    options.parallel = 1
     options.brightness = brightness
-    options.pixel_mapper_config = "U-mapper;Rotate:180"
-    options.gpio_slowdown = 1
-    options.pwm_lsb_nanoseconds = 80
+    options.gpio_slowdown = 4
+    options.pwm_lsb_nanoseconds = 130
     options.limit_refresh_rate_hz = 150
     options.hardware_mapping = 'adafruit-hat'  # If you have an Adafruit HAT: 'adafruit-hat'
     options.drop_privileges = False
@@ -59,7 +56,7 @@ def main():
     while(True):
         frame = app_list[0].generate()
         if not displayOn:
-            frame = black_screen
+            frame = empty
 
         #matrix.brightness = 100
         matrix.SetImage(frame)
