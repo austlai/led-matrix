@@ -54,9 +54,9 @@ class Default:
             },
             'dm' : {
                 'image': 'res/dm.jpg',
-                'timepos': (3, 6),
+                'timepos': (45, 2),
                 'date': True,
-                'datepos': (23, 6),
+                'datepos': (45, 8),
                 'primary': light_pink,
                 'secondary': dark_pink,
                 'border': False,
@@ -88,7 +88,7 @@ class Default:
             self.show_day = not self.show_day
             self.updateTime = time.time()
 
-        theme = self.themes['ponyo']
+        theme = self.themes['cat']
         frame = Image.open(theme['image']).convert("RGB")
 
         set_datetime(frame, theme, self.show_day)
