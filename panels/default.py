@@ -37,6 +37,7 @@ class Default:
             'sakura' : {
                 'image': 'res/sakura.png',
                 'timepos': (3, 6),
+                'date': True,
                 'datepos': (23, 6),
                 'primary': light_pink,
                 'secondary': dark_pink,
@@ -45,6 +46,7 @@ class Default:
             'cat' : {
                 'image': 'res/cat.jpg',
                 'timepos': (3, 6),
+                'date': True,
                 'datepos': (23, 6),
                 'primary': light_pink,
                 'secondary': dark_pink,
@@ -53,6 +55,7 @@ class Default:
             'dm' : {
                 'image': 'res/dm.jpg',
                 'timepos': (3, 6),
+                'date': True,
                 'datepos': (23, 6),
                 'primary': light_pink,
                 'secondary': dark_pink,
@@ -61,6 +64,7 @@ class Default:
             'flowers' : {
                 'image': 'res/flowers.jpg',
                 'timepos': (3, 6),
+                'date': True,
                 'datepos': (23, 6),
                 'primary': light_pink,
                 'secondary': dark_pink,
@@ -68,8 +72,9 @@ class Default:
             },
             'ponyo' : {
                 'image': 'res/ponyo.jpg',
-                'timepos': (5, 4),
-                'datepos': (3, 11),
+                'timepos': (43, 4),
+                'date': False,
+                'datepos': (4, 4),
                 'primary': white,
                 'secondary': cyan,
                 'border': True,
@@ -114,13 +119,14 @@ def set_datetime(frame, theme, show_day):
     draw.text((tpos[0] + 7, tpos[1]), ":", theme['primary'], font=font)
     draw.text((tpos[0] + 10, tpos[1]), padNum(minutes), theme['primary'], font=font)
 
-    if show_day:
-        if theme['border']:
-            draw.rectangle(((dpos[0] - 2, dpos[1] - 2), (dpos[0] + 18, dpos[1] + 6)), black)
-        draw.text(dpos, padNum(month), theme['secondary'], font=font)
-        draw.text((dpos[0] + 7, dpos[1]), ".", theme['secondary'], font=font)
-        draw.text((dpos[0] + 10, dpos[1]), padNum(day), theme['secondary'], font=font)
-    else:
-        if theme['border']:
-            draw.rectangle(((dpos[0] - 2, dpos[1] - 2), (dpos[0] + 13, dpos[1] + 6)), black)
-        draw.text(dpos, dayOfWeek, theme["secondary"], font=font)
+    if theme['date']:
+        if show_day:
+            if theme['border']:
+                draw.rectangle(((dpos[0] - 2, dpos[1] - 2), (dpos[0] + 18, dpos[1] + 6)), black)
+            draw.text(dpos, padNum(month), theme['secondary'], font=font)
+            draw.text((dpos[0] + 7, dpos[1]), ".", theme['secondary'], font=font)
+            draw.text((dpos[0] + 10, dpos[1]), padNum(day), theme['secondary'], font=font)
+        else:
+            if theme['border']:
+                draw.rectangle(((dpos[0] - 2, dpos[1] - 2), (dpos[0] + 13, dpos[1] + 6)), black)
+            draw.text(dpos, dayOfWeek, theme["secondary"], font=font)
