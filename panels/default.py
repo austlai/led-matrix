@@ -10,8 +10,8 @@ salmon = (255,150,162)
 tan = (255,205,178)
 orange_tinted_white = (248,237,235)
 
-red = (150, 1, 8)
-dark_red = (102, 0, 51)
+black = (0, 0, 0)
+dark_red = (46, 0, 51)
 
 washed_out_navy = (109,104,117)
 
@@ -36,36 +36,36 @@ class Default:
                 'image': 'res/sakura.png',
                 'timepos': (3, 6),
                 'datepos': (23, 6),
-                'primary_colour': light_pink,
-                'secondary_colour': dark_pink,
+                'primary': light_pink,
+                'secondary': dark_pink,
             },
             'cat' : {
                 'image': 'res/cat.jpg',
                 'timepos': (3, 6),
                 'datepos': (23, 6),
-                'primary_colour': light_pink,
-                'secondary_colour': dark_pink,
+                'primary': light_pink,
+                'secondary': dark_pink,
             },
             'dm' : {
                 'image': 'res/dm.jpg',
                 'timepos': (3, 6),
                 'datepos': (23, 6),
-                'primary_colour': light_pink,
-                'secondary_colour': dark_pink,
+                'primary': light_pink,
+                'secondary': dark_pink,
             },
             'flowers' : {
                 'image': 'res/flowers.jpg',
                 'timepos': (3, 6),
                 'datepos': (23, 6),
-                'primary_colour': light_pink,
-                'secondary_colour': dark_pink,
+                'primary': light_pink,
+                'secondary': dark_pink,
             },
             'ponyo' : {
                 'image': 'res/ponyo.jpg',
                 'timepos': (5, 6),
                 'datepos': (3, 12),
-                'primary_colour': dark_red,
-                'secondary_colour': red,
+                'primary': dark_red,
+                'secondary': black,
             },
         }
 
@@ -83,7 +83,7 @@ class Default:
 
         return frame
 
-def padToTwoDigit(num):
+def padNum(num):
     return "0" + str(num) if num < 10 else str(num)
 
 def set_datetime(frame, theme, show_day):
@@ -100,13 +100,13 @@ def set_datetime(frame, theme, show_day):
     tpos = theme['timepos']
     dpos = theme['datepos']
 
-    draw.text(tpos, padToTwoDigit(hours), theme['primary_colour'], font=font)
-    draw.text((tpos[0] + 7, tpos[1]), ":", theme['primary_colour'], font=font)
-    draw.text((tpos[0] + 10, tpos[1]), padToTwoDigit(minutes), theme['primary_colour'], font=font)
+    draw.text(tpos, padNum(hours), theme['primary'], font=font)
+    draw.text((tpos[0] + 7, tpos[1]), ":", theme['primary'], font=font)
+    draw.text((tpos[0] + 10, tpos[1]), padNum(minutes), theme['primary'], font=font)
 
     if (show_day):
-        draw.text(dpos, padToTwoDigit(month), theme['secondary_colour'], font=font)
-        draw.text((dpos[0] + 7, dpos[1]), ".", theme['secondary_colour'], font=font)
-        draw.text((dpos[0] + 10, dpos[1]), padToTwoDigit(day), theme['secondary_colour'], font=font)
+        draw.text(dpos, padNum(month), theme['secondary'], font=font)
+        draw.text((dpos[0] + 7, dpos[1]), ".", theme['secondary'], font=font)
+        draw.text((dpos[0] + 10, dpos[1]), padNum(day), theme['secondary'], font=font)
     else:
-        draw.text(dpos, dayOfWeek, dark_pink, font=font)
+        draw.text(dpos, dayOfWeek, theme["secondary"], font=font)

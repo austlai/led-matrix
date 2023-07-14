@@ -46,7 +46,7 @@ def main():
     options.brightness = brightness
     options.gpio_slowdown = 4
     options.pwm_lsb_nanoseconds = 130
-    options.limit_refresh_rate_hz = 150
+    options.limit_refresh_rate_hz = 200
     options.hardware_mapping = 'adafruit-hat'  # If you have an Adafruit HAT: 'adafruit-hat'
     options.drop_privileges = False
     matrix = RGBMatrix(options = options)
