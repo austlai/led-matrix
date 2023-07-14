@@ -5,7 +5,6 @@ import configparser
 from PIL import Image
 
 from panels import default
-from modules import timedate
 
 def main():
     brightness = 50
@@ -23,19 +22,18 @@ def main():
     empty = Image.new("RGB", (canvas_width, canvas_height), (0,0,0))
 
     modules = {
-        'timedate': timedate.TimeDate(config),
-        'weather' : WeatherModule(config),
-        'spotify' : SpotifyModule(config),
-        'train': Train(config),
-        'video': Video(config),
-        'gif': Gif(config)
+        # 'weather' : WeatherModule(config),
+        # 'spotify' : SpotifyModule(config),
+        # 'train': Train(config),
+        # 'video': Video(config),
+        # 'gif': Gif(config)
     }
 
-    app_list = [default.Default(config, modules),
-                notion_v2.NotionScreen(config, modules),
-                weather.WeatherScreen(config, modules),
-                gif_viewer.GifScreen(config, modules),
-                spotify_player.SpotifyScreen(config, modules)]
+    app_list = [default.Default(config),
+        # weather.Weather(config, modules),
+        # viewer.Gif(config, modules),
+        # player.Spotify(config, modules)
+    ]
 
     currentdir = os.getcwd()
     sys.path.append(currentdir+"/rpi-rgb-led-matrix/bindings/python")
