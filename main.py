@@ -21,7 +21,7 @@ def main():
     canvas_height = 32
 
     empty = Image.new("RGB", (canvas_width, canvas_height), (0,0,0))
-
+    
     modules = {
         # 'weather' : WeatherModule(config),
         # 'spotify' : SpotifyModule(config),
@@ -47,8 +47,9 @@ def main():
     options.brightness = brightness
     options.gpio_slowdown = 4
     options.pwm_lsb_nanoseconds = 130
-    options.limit_refresh_rate_hz = 200
-    options.hardware_mapping = 'adafruit-hat'  # If you have an Adafruit HAT: 'adafruit-hat'
+    options.limit_refresh_rate_hz = 0
+    options.led_rgb_sequence = 'RBG'
+    options.hardware_mapping = 'adafruit-hat-pwm'  # If you have an Adafruit HAT: 'adafruit-hat'
     options.drop_privileges = False
     matrix = RGBMatrix(options = options)
 
@@ -58,9 +59,10 @@ def main():
         else:
             display_on = False
 
-        frame = app_list[0].generate()
         if not display_on:
             frame = empty
+        else:
+            frame = app_list[0].generate()
 
         matrix.SetImage(frame)
         time.sleep(0.5)
