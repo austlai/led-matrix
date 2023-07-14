@@ -3,12 +3,13 @@ import os
 import time
 import configparser
 from PIL import Image
+import datetime as dt
 
 from panels import default
 
 def main():
     brightness = 50
-    displayOn = True
+    display_on = True
 
     config = configparser.ConfigParser()
     parsed_configs = config.read('config')
@@ -52,13 +53,17 @@ def main():
     matrix = RGBMatrix(options = options)
 
     while(True):
+        if dt.datetime.now().time() > dt.time(8, 0) and dt.datetime.now().time() <= dt.time(23, 59):
+            display_on = True
+        else:
+            display_on = False
+
         frame = app_list[0].generate()
-        if not displayOn:
+        if not display_on:
             frame = empty
 
-        #matrix.brightness = 100
         matrix.SetImage(frame)
-        time.sleep(0.05)
+        time.sleep(0.5)
 
 if __name__ == '__main__':
     try:

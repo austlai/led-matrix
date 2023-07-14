@@ -72,7 +72,7 @@ class Default:
             },
             'ponyo' : {
                 'image': 'res/ponyo.jpg',
-                'timepos': (43, 4),
+                'timepos': (4, 4),
                 'date': False,
                 'datepos': (4, 4),
                 'primary': white,
