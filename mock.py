@@ -34,10 +34,9 @@ def background_thread():
     while True:
         socketio.sleep(3)
         count += 1
-        img = default.MainScreen(config).generate()
+        img = default.Default(config).generate()
         buffered = BytesIO()
         img.save(buffered, format="png")
-        img.save("temp.png")
         img_str = base64.b64encode(buffered.getvalue())
 
         socketio.emit('background_resp', {'frame': img_str, 'count': count})

@@ -5,36 +5,37 @@ import configparser
 from PIL import Image
 
 from panels import default
+from modules import timedate
 
 def main():
     brightness = 100
     displayOn = True
 
     config = configparser.ConfigParser()
-    parsed_configs = config.read('../config')
+    parsed_configs = config.read('config')
     if len(parsed_configs) == 0:
         print("no config file found")
-        # sys.exit()
+        sys.exit()
 
     canvas_width = 64
     canvas_height = 32
 
     black_screen = Image.new("RGB", (canvas_width, canvas_height), (0,0,0))
 
-    # modules =   {
-    #                 'weather' : weather_module.WeatherModule(config),
-    #                 'notifications' : notification_module.NotificationModule(config),
-    #                 'spotify' : spotify_module.SpotifyModule(config)
-    #             }
+    modules = {
+        'timedate': timedate.TimeDate(config),
+        'weather' : WeatherModule(config),
+        'spotify' : SpotifyModule(config),
+        'train': Train(config),
+        'video': Video(config),
+        'gif': Gif(config)
+    }
 
-    # app_list = [main_screen.MainScreen(config, modules, callbacks),
-    #             notion_v2.NotionScreen(config, modules, callbacks),
-    #             weather.WeatherScreen(config, modules, callbacks),
-    #             subcount.SubcountScreen(config, modules, callbacks),
-    #             gif_viewer.GifScreen(config, modules, callbacks),
-    #             life.GameOfLifeScreen(config, modules, callbacks),
-    #             spotify_player.SpotifyScreen(config, modules, callbacks)]
-    app_list = [default.MainScreen(config)]
+    app_list = [default.Default(config, modules),
+                notion_v2.NotionScreen(config, modules),
+                weather.WeatherScreen(config, modules),
+                gif_viewer.GifScreen(config, modules),
+                spotify_player.SpotifyScreen(config, modules)]
 
     currentdir = os.getcwd()
     sys.path.append(currentdir+"/rpi-rgb-led-matrix/bindings/python")

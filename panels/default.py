@@ -10,6 +10,9 @@ salmon = (255,150,162)
 tan = (255,205,178)
 orange_tinted_white = (248,237,235)
 
+red = (150, 1, 8)
+dark_red = (102, 0, 51)
+
 washed_out_navy = (109,104,117)
 
 discordColor = (150,170,255)
@@ -19,75 +22,91 @@ smsColor = (110, 255, 140)
 
 spotify_color = (0,255,0)
 
-class MainScreen:
+class Default:
     def __init__(self, config):
-        self.font = ImageFont.truetype("fonts/tiny.otf", 5)
-
         self.canvas_width = config.getint('System', 'canvas_width', fallback=64)
         self.canvas_height = config.getint('System', 'canvas_height', fallback=32)
-        self.cycle_time = config.getint('Main Screen', 'cycle_time', fallback=20)
-        self.use_24_hour = config.getboolean('Main Screen', 'use_24_hour', fallback=False)
 
-        self.lastGenerateCall = None
-        self.on_cycle = True
+        self.loop_time = 20
+        self.show_day = True
+        self.updateTime= None
 
-        self.bgs = {'sakura' : Image.open('res/sakura-bg.png').convert("RGBA")}
-        self.theme_list = [self.generateSakura]
-
-        self.currentIdx = 0
-        self.selectMode = False
-
-        self.old_noti_list = []
-        self.queued_frames = []
+        self.themes = {
+            'sakura' : {
+                'image': 'res/sakura.png',
+                'timepos': (3, 6),
+                'datepos': (23, 6),
+                'primary_colour': light_pink,
+                'secondary_colour': dark_pink,
+            },
+            'cat' : {
+                'image': 'res/cat.jpg',
+                'timepos': (3, 6),
+                'datepos': (23, 6),
+                'primary_colour': light_pink,
+                'secondary_colour': dark_pink,
+            },
+            'dm' : {
+                'image': 'res/dm.jpg',
+                'timepos': (3, 6),
+                'datepos': (23, 6),
+                'primary_colour': light_pink,
+                'secondary_colour': dark_pink,
+            },
+            'flowers' : {
+                'image': 'res/flowers.jpg',
+                'timepos': (3, 6),
+                'datepos': (23, 6),
+                'primary_colour': light_pink,
+                'secondary_colour': dark_pink,
+            },
+            'ponyo' : {
+                'image': 'res/ponyo.jpg',
+                'timepos': (5, 6),
+                'datepos': (3, 12),
+                'primary_colour': dark_red,
+                'secondary_colour': red,
+            },
+        }
 
     def generate(self):
+        if (self.updateTime is None):
+            self.updateTime= time.time()
+        if (time.time() - self.updateTime>= self.loop_time):
+            self.show_day = not self.show_day
+            self.updateTime = time.time()
 
-        if (self.lastGenerateCall is None):
-            self.lastGenerateCall = time.time()
-        if (time.time() - self.lastGenerateCall >= self.cycle_time):
-            self.on_cycle = not self.on_cycle
-            self.lastGenerateCall = time.time()
+        theme = self.themes['ponyo']
+        frame = Image.open(theme['image']).convert("RGB")
 
-        frame = self.theme_list[0]()
-
-        if (self.selectMode):
-            draw = ImageDraw.Draw(frame)
-            draw.rectangle((0,0,self.canvas_width-1,self.canvas_height-1), outline=white)
-
-        return frame
-
-    def generateSakura(self):
-        currentTime = datetime.now()
-        month = currentTime.month
-        day = currentTime.day
-        dayOfWeek = currentTime.weekday() + 1
-        hours = currentTime.hour
-        if not self.use_24_hour:
-            hours = hours % 12
-            if (hours == 0):
-                hours += 12
-        minutes = currentTime.minute
-
-        frame = self.bgs['sakura'].copy()
-        draw = ImageDraw.Draw(frame)
-
-        draw.text((3, 6), padToTwoDigit(hours), light_pink, font=self.font)
-        draw.text((10, 6), ":", light_pink, font=self.font)
-        draw.text((13, 6), padToTwoDigit(minutes), light_pink, font=self.font)
-
-        if (self.on_cycle):
-            #date
-            draw.text((23, 6), padToTwoDigit(month), dark_pink, font=self.font)
-            draw.text((30, 6), ".", dark_pink, font=self.font)
-            draw.text((33, 6), padToTwoDigit(day), dark_pink, font=self.font)
-        else:
-            #dayOfWeek
-            draw.text((23, 6), padToTwoDigit(dayOfWeek), dark_pink, font=self.font)
+        set_datetime(frame, theme, self.show_day)
 
         return frame
 
 def padToTwoDigit(num):
-    if num < 10:
-        return "0" + str(num)
+    return "0" + str(num) if num < 10 else str(num)
+
+def set_datetime(frame, theme, show_day):
+    currentTime = datetime.now()
+    month = currentTime.month
+    day = currentTime.day
+    dayOfWeek = currentTime.strftime("%A")[:3]
+    hours = currentTime.hour
+    minutes = currentTime.minute
+
+    font = ImageFont.truetype("fonts/tiny.otf", 5)
+    draw = ImageDraw.Draw(frame)
+
+    tpos = theme['timepos']
+    dpos = theme['datepos']
+
+    draw.text(tpos, padToTwoDigit(hours), theme['primary_colour'], font=font)
+    draw.text((tpos[0] + 7, tpos[1]), ":", theme['primary_colour'], font=font)
+    draw.text((tpos[0] + 10, tpos[1]), padToTwoDigit(minutes), theme['primary_colour'], font=font)
+
+    if (show_day):
+        draw.text(dpos, padToTwoDigit(month), theme['secondary_colour'], font=font)
+        draw.text((dpos[0] + 7, dpos[1]), ".", theme['secondary_colour'], font=font)
+        draw.text((dpos[0] + 10, dpos[1]), padToTwoDigit(day), theme['secondary_colour'], font=font)
     else:
-        return str(num)
+        draw.text(dpos, dayOfWeek, dark_pink, font=font)
