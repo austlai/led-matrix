@@ -13,7 +13,7 @@ orange_tinted_white = (248,237,235)
 black = (0, 0, 0)
 dark_red = (46, 0, 51)
 
-cyan = (69, 178, 186)
+cyan = (128, 247, 255)
 
 washed_out_navy = (109,104,117)
 
@@ -68,8 +68,8 @@ class Default:
             },
             'ponyo' : {
                 'image': 'res/ponyo.jpg',
-                'timepos': (5, 6),
-                'datepos': (3, 12),
+                'timepos': (5, 4),
+                'datepos': (3, 11),
                 'primary': white,
                 'secondary': cyan,
                 'border': True,
@@ -108,16 +108,20 @@ def set_datetime(frame, theme, show_day):
     dpos = theme['datepos']
 
     if (theme['border']):
-        draw.rectangle(((tpos[0] - 1, tpos[1] - 1), (tpos[0] + 17, tpos[1] + 5)), black)
-        draw.rectangle(((dpos[0] - 1, dpos[1] - 1), (dpos[0] + 17, dpos[1] + 5)), black)
+        draw.rectangle(((tpos[0] - 2, tpos[1] - 2), (tpos[0] + 18, tpos[1] + 6)), black)
+        draw.rectangle(((dpos[0] - 2, dpos[1] - 2), (dpos[0] + 18, dpos[1] + 6)), black)
 
     draw.text(tpos, padNum(hours), theme['primary'], font=font)
     draw.text((tpos[0] + 7, tpos[1]), ":", theme['primary'], font=font)
     draw.text((tpos[0] + 10, tpos[1]), padNum(minutes), theme['primary'], font=font)
 
-    if (show_day):
+    if show_day:
+        if theme['border']:
+            draw.rectangle(((dpos[0] - 2, dpos[1] - 2), (dpos[0] + 18, dpos[1] + 6)), black)
         draw.text(dpos, padNum(month), theme['secondary'], font=font)
         draw.text((dpos[0] + 7, dpos[1]), ".", theme['secondary'], font=font)
         draw.text((dpos[0] + 10, dpos[1]), padNum(day), theme['secondary'], font=font)
     else:
+        if theme['border']:
+            draw.rectangle(((dpos[0] - 2, dpos[1] - 2), (dpos[0] + 13, dpos[1] + 6)), black)
         draw.text(dpos, dayOfWeek, theme["secondary"], font=font)
