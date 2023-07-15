@@ -79,6 +79,24 @@ class Default:
                 'secondary': cyan,
                 'border': True,
             },
+            'hk1' : {
+                'image': 'res/hk1.png',
+                'timepos': (3, 6),
+                'date': True,
+                'datepos': (23, 6),
+                'primary': light_pink,
+                'secondary': dark_pink,
+                'border': False,
+            },
+            'hk2' : {
+                'image': 'res/hk2.png',
+                'timepos': (3, 6),
+                'date': True,
+                'datepos': (23, 6),
+                'primary': light_pink,
+                'secondary': dark_pink,
+                'border': False,
+            },
         }
 
     def generate(self):
