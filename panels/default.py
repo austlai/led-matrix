@@ -106,7 +106,7 @@ class Default:
             self.show_day = not self.show_day
             self.updateTime = time.time()
 
-        theme = self.themes['ponyo']
+        theme = self.themes['hk2']
         frame = Image.open(theme['image']).convert("RGB")
 
         set_datetime(frame, theme, self.show_day)
