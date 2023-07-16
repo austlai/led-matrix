@@ -7,21 +7,12 @@ import datetime as dt
 
 from panels import default
 
-def main():
-    brightness = 50
-    display_on = True
+def run(config):
+    width = 64
+    height = 32
 
-    config = configparser.ConfigParser()
-    parsed_configs = config.read('config')
-    if len(parsed_configs) == 0:
-        print("no config file found")
-        sys.exit()
+    empty = Image.new("RGB", (width, height), (0,0,0))
 
-    canvas_width = 64
-    canvas_height = 32
-
-    empty = Image.new("RGB", (canvas_width, canvas_height), (0,0,0))
-    
     modules = {
         # 'weather' : WeatherModule(config),
         # 'spotify' : SpotifyModule(config),
@@ -44,8 +35,8 @@ def main():
     options = RGBMatrixOptions()
     options.rows = 32
     options.cols = 64
-    options.brightness = brightness
     options.gpio_slowdown = 4
+    options.brightness = 50
     options.pwm_lsb_nanoseconds = 130
     options.limit_refresh_rate_hz = 0
     options.led_rgb_sequence = 'RBG'
@@ -54,6 +45,7 @@ def main():
     matrix = RGBMatrix(options = options)
 
     while(True):
+        matrix.SetBrightness(10)
         if dt.datetime.now().time() > dt.time(8, 0) and dt.datetime.now().time() <= dt.time(23, 59):
             display_on = True
         else:
@@ -69,7 +61,12 @@ def main():
 
 if __name__ == '__main__':
     try:
-        main()
+        config = configparser.ConfigParser()
+        parsed_configs = config.read('config')
+        if len(parsed_configs) == 0:
+            print("no config file found")
+            sys.exit()
+        run(config)
     except KeyboardInterrupt:
         print('Interrupted with Ctrl-C')
         sys.exit(0)

@@ -26,8 +26,8 @@ spotify_color = (0,255,0)
 
 class Default:
     def __init__(self, config):
-        self.canvas_width = config.getint('System', 'canvas_width', fallback=64)
-        self.canvas_height = config.getint('System', 'canvas_height', fallback=32)
+        self.canvas_width = config.getint('System', 'width', fallback=64)
+        self.canvas_height = config.getint('System', 'height', fallback=32)
 
         self.loop_time = 20
         self.show_day = True
