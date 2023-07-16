@@ -16,4 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('brightness-num').innerHTML = slider.value;
         socket.emit("brightness_update", { value: slider.value });
     }, false);
+
+    document.getElementById('display-toggle').addEventListener('click', () => {
+	socket.emit('display_toggle', {});
+    }), false;
 });

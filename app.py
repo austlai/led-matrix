@@ -2,11 +2,13 @@ import sys
 import base64
 import configparser
 from io import BytesIO
-from threading import Lock
+from threading import Lock, Thread
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
+from multiprocessing import Process, Manager
+from multiprocessing.managers import BaseManager
 
-import controller
+from controller import Controller
 from panels import default
 
 async_mode = 'threading'
@@ -21,6 +23,8 @@ parsed_configs = config.read('config')
 if len(parsed_configs) == 0:
     print("no config file found")
     sys.exit()
+
+controller = Controller(config)
 
 def panel_update():
     """Example of how to send server generated events to clients."""
@@ -44,9 +48,14 @@ def connect():
         if thread is None:
             thread = socketio.start_background_task(panel_update)
 
+@socketio.on('display_toggle')
+def display_toggle(data):
+    controller.toggle_display()
+
 @socketio.on('brightness_update')
 def brightness(data):
     print(data['value'])
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+
