@@ -18,12 +18,12 @@ thread = None
 thread_lock = Lock()
 
 proc = None
-display_on = False
-current_module = 0
+display_on = True
+current_module = 'clock'
 brightness = 50
 theme = 'hk2'
 modules = {
-    'clock': ['sudo', '.venv/bin/python3', 'modules/clock.py']
+    'clock': ['sudo', '.venv/bin/python3', 'modules/clock.py', '-b', str(brightness), '-t', theme]
 }
 
 def panel_update():
@@ -55,7 +55,7 @@ def toggle_display(data):
     if display_on:
         subprocess.check_output(['sudo', 'kill', str(os.getpgid(proc.pid))])
     else:
-        proc = subprocess.Popen(['sudo', '.venv/bin/python3', 'modules/clock.py', '-b', str(brightness), '-t', theme], preexec_fn=os.setpgrp)
+        proc = subprocess.Popen(modules[current_module], preexec_fn=os.setpgrp)
     display_on = not display_on
 
 @socketio.on('theme_update')
@@ -80,7 +80,7 @@ def refresh_display():
     global proc, display_on, brightness, theme
     if display_on:
         subprocess.check_output(['sudo', 'kill', str(os.getpgid(proc.pid))])
-    proc = subprocess.Popen(['sudo', '.venv/bin/python3', 'modules/clock.py', '-b', str(brightness), '-t', theme], preexec_fn=os.setpgrp)
+    proc = subprocess.Popen(modules[current_module], preexec_fn=os.setpgrp)
     display_on = True
 
 def display_off():
@@ -96,5 +96,6 @@ def handle_shutdown():
 
 if __name__ == '__main__':
     atexit.register(handle_shutdown)
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    proc = subprocess.Popen(modules[current_module], preexec_fn=os.setpgrp)
+    socketio.run(app, debug=False, host='0.0.0.0', port=5000)
 
