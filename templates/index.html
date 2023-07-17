@@ -9,11 +9,22 @@
     <body>
         <div class="container">
             <div class="item-column">
-                <img id="panel-preview" src=""/>
+                <div class="grid" id="grid"></div>
+            <div>
+            <div class="item-column">
+                <div class="options">
+                    <button id="submit-btn">Submit Grid</button>
+                    <button id="clear-btn">Clear Grid</button>
+                    <button id="fill-btn">Fill Background</button>
+                    <input type="color" id="colour-input" />
+                    <button id="erase-btn">Erase</button>
+                    <button id="paint-btn">Paint</button>
+                </div>
             <div>
             <div class="item-column">
                 <div class="item-child">
-                    <p id="brightness-num"></p>
+                    <span>Brightness: </span>
+                    <span id="brightness-num"></span>
                 </div>
                 <div class="item-child">
                     <input type="range" step="10" min="0" max="100" value="50" class="slider" id="brightness-slider">

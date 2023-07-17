@@ -25,6 +25,7 @@ theme = 'hk2'
 modules = {
     'clock': ['sudo', '.venv/bin/python3', 'modules/clock.py', '-b', str(brightness), '-t', theme]
 }
+debug = True
 
 def panel_update():
     pass
@@ -76,6 +77,11 @@ def set_brightness(data):
     else:
         refresh_display()
 
+@socketio.on('grid_send')
+def show_grid(data):
+    global brightness, display_on
+    print(data['value'])
+
 def refresh_display():
     global proc, display_on, brightness, theme
     if display_on:
@@ -96,6 +102,7 @@ def handle_shutdown():
 
 if __name__ == '__main__':
     atexit.register(handle_shutdown)
-    proc = subprocess.Popen(modules[current_module], preexec_fn=os.setpgrp)
-    socketio.run(app, debug=False, host='0.0.0.0', port=5000)
+    if not debug:
+        proc = subprocess.Popen(modules[current_module], preexec_fn=os.setpgrp)
+    socketio.run(app, debug=debug, host='0.0.0.0', port=5000)
 
