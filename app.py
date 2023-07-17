@@ -1,4 +1,6 @@
+import os
 import base64
+import atexit
 import subprocess
 from signal import SIGINT
 from io import BytesIO
@@ -8,28 +10,31 @@ from flask_socketio import SocketIO, emit
 
 from modules import clock
 
-async_mode = 'threading'
-
 app = Flask(__name__)
+
+async_mode = 'threading'
 socketio = SocketIO(app, async_mode=async_mode, max_http_bufffer_size=100000)
 thread = None
 thread_lock = Lock()
+
+proc = None
 display_on = False
 current_module = 0
+brightness = 50
+theme = 'hk2'
 modules = {
     'clock': ['sudo', '.venv/bin/python3', 'modules/clock.py']
 }
 
 def panel_update():
-    """Example of how to send server generated events to clients."""
-    clock_module = clock.Clock(50, 'hk2')
-    while True:
-        socketio.sleep(1)
-        img = clock_module.get_frame()
-        buffered = BytesIO()
-        img.save(buffered, format="png")
-        img_str = base64.b64encode(buffered.getvalue())
-        socketio.emit('panel_update', {'frame': img_str})
+    pass
+    #while True:
+        #socketio.sleep(1)
+        #img = get_frame()
+        #buffered = BytesIO()
+        #img.save(buffered, format="png")
+        #img_str = base64.b64encode(buffered.getvalue())
+        #socketio.emit('panel_update', {'frame': img_str})
 
 @app.route('/')
 def index():
@@ -37,25 +42,59 @@ def index():
 
 @socketio.on('connect')
 def connect():
-    socketio.emit('init', { 'value': 50 })
+    socketio.emit('init', { 'brightness': brightness, 'theme': theme })
     global thread
     with thread_lock:
         if thread is None:
             thread = socketio.start_background_task(panel_update)
+            pass
 
 @socketio.on('display_toggle')
-def display_toggle():
-    global proc
-    if display_on and proc:
-        proc.send_signal(SIGINT)
+def toggle_display(data):
+    global proc, display_on, brightness, theme
+    if display_on:
+        subprocess.check_output(['sudo', 'kill', str(os.getpgid(proc.pid))])
     else:
-        proc = subprocess.Popen(['sudo', '.venv/bin/python3', 'modules/clock.py'])
+        proc = subprocess.Popen(['sudo', '.venv/bin/python3', 'modules/clock.py', '-b', str(brightness), '-t', theme], preexec_fn=os.setpgrp)
+    display_on = not display_on
+
+@socketio.on('theme_update')
+def set_theme(data):
+    global theme
+    theme = data['value']
+    if display_on:
+        refresh_display()
 
 @socketio.on('brightness_update')
-def brightness(data):
-    print(data['value'])
+def set_brightness(data):
+    global brightness, display_on
+    brightness = data['value']
+    if not display_on:
+        return
+    if brightness == '0':
+        display_off()
+    else:
+        refresh_display()
+
+def refresh_display():
+    global proc, display_on, brightness, theme
+    if display_on:
+        subprocess.check_output(['sudo', 'kill', str(os.getpgid(proc.pid))])
+    proc = subprocess.Popen(['sudo', '.venv/bin/python3', 'modules/clock.py', '-b', str(brightness), '-t', theme], preexec_fn=os.setpgrp)
+    display_on = True
+
+def display_off():
+    global proc, display_on
+    if display_on:
+        subprocess.check_output(['sudo', 'kill', str(os.getpgid(proc.pid))])
+    display_on = False
+
+def handle_shutdown():
+    global proc
+    if proc:
+        subprocess.check_output(['sudo', 'kill', str(os.getpgid(proc.pid))])
 
 if __name__ == '__main__':
-    proc = subprocess.Popen(['sudo', '.venv/bin/python3', 'modules/clock.py'])
+    atexit.register(handle_shutdown)
     socketio.run(app, debug=True, host='0.0.0.0', port=5000)
 

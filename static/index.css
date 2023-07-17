@@ -5,10 +5,25 @@
     margin: 0 auto;
 }
 
-.item {
+.item-column {
     display: flex;
     flex-direction: column;
     flex: 1;
+}
+
+.item-row {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.item-child {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+    justify-content: center;
 }
 
 #panel-preview {
@@ -42,6 +57,8 @@
     opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
     -webkit-transition: .2s; /* 0.2 seconds transition on hover */
     transition: opacity .2s;
+    margin-bottom: 20px;
+    width: 100%;
 }
 
 /* Mouse-over effects */
@@ -64,4 +81,22 @@
     height: 25px; /* Slider handle height */
     background: #04AA6D; /* Green background */
     cursor: pointer; /* Cursor on hover */
+}
+
+#display-toggle {
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
+
+.theme-label {
+    width: 100%;
+}
+
+.theme-select {
+    width: 100%;
+}
+
+#brightness-num {
+    font-size: 1.2em;
 }

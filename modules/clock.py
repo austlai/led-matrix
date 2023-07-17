@@ -1,6 +1,7 @@
 import time
 import sys
 import os
+import argparse
 import datetime as dt
 from PIL import Image, ImageDraw, ImageFont
 
@@ -168,7 +169,11 @@ def padNum(num):
 
 if __name__ == '__main__':
     try:
-        clock = Clock(50, 'hk2')
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-b", "--brightness")
+        parser.add_argument("-t", "--theme")
+        args = parser.parse_args()
+        clock = Clock(int(args.brightness), args.theme)
         clock.run()
     except KeyboardInterrupt:
         print('Interrupted with Ctrl-C')
