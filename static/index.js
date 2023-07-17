@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const width = 64;
     const height = 32;
 
+    let activeGrid = false;
     let fillColour = '#FFF';
 
     let events = {
@@ -69,6 +70,53 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     isTouchDevice();
 
+    const handle_down = (e) => {
+        draw = true;
+        if (erase) {
+            e.target.style.backgroundColor = fillColour;
+        } else {
+            e.target.style.backgroundColor = colourInput.value;
+        }
+        send_grid();
+        e.preventDefault();
+    };
+
+    const handle_move = (e) => {
+        let elementId = document.elementFromPoint(
+            !isTouchDevice() ? e.clientX : e.touches[0].clientX,
+            !isTouchDevice() ? e.clientY : e.touches[0].clientY
+        ).id;
+        checker(elementId);
+    };
+
+    const handle_up = () => {
+        draw = false;
+    }
+
+    grid.addEventListener('click', () => {
+        for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+                let cell = document.getElementById(`grid-${j}-${i}`);
+                cell.addEventListener(events[deviceType].down, handle_down);
+                cell.addEventListener(events[deviceType].move, handle_move);
+                cell.addEventListener(events[deviceType].up, handle_up);
+            }
+        }
+        socket.emit('grid_toggle', { value: true });
+    });
+
+    grid.addEventListener('mouseleave', () => {
+        console.log("MOUSELEAVE")
+        for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+                let cell = document.getElementById(`grid-${j}-${i}`);
+                cell.removeEventListener(events[deviceType].down, handle_down);
+                cell.removeEventListener(events[deviceType].move, handle_move);
+                cell.removeEventListener(events[deviceType].up, handle_up);
+            }
+        }
+    });
+
     // Build Grid
     for (let i = 0; i < height; i++) {
         let div = document.createElement("div");
@@ -78,24 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
             col.classList.add("gridCol");
             col.setAttribute("id", `grid-${j}-${i}`);
             col.style.backgroundColor = "#000";
-            col.addEventListener(events[deviceType].down, () => {
-                draw = true;
-                if (erase) {
-                    col.style.backgroundColor = fillColour;
-                } else {
-                    col.style.backgroundColor = colourInput.value;
-                }
-            });
-            col.addEventListener(events[deviceType].move, (e) => {
-                let elementId = document.elementFromPoint(
-                    !isTouchDevice() ? e.clientX : e.touches[0].clientX,
-                    !isTouchDevice() ? e.clientY : e.touches[0].clientY
-                ).id;
-                checker(elementId);
-            });
-            col.addEventListener(events[deviceType].up, () => {
-                draw = false;
-            });
             div.appendChild(col);
         }
         grid.appendChild(div);
@@ -107,8 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (elementId == element.id) {
                 if (draw && !erase) {
                     element.style.backgroundColor = colourInput.value;
+                    send_grid();
                 } else if (draw && erase) {
-                    element.style.backgroundColor = "transparent";
+                    element.style.backgroundColor = fillColour;
+                    send_grid();
                 }
             }
         });
@@ -120,13 +152,24 @@ document.addEventListener("DOMContentLoaded", () => {
         var b = parseInt(hexcolor.substr(4,2),16);
         var yiq = ((r*299)+(g*587)+(b*114))/1000;
         let gridColumns = document.querySelectorAll(".gridCol");
-        gridColumns.forEach((element) => {
-            if (yiq < 40) {
+        let gridRows = document.querySelectorAll(".gridRow");
+        if (yiq < 40) {
+            gridColumns.forEach((element) => {
                 element.style.borderColor = '#222'
-            } else {
+            });
+            gridRows.forEach((element) => {
+                element.style.borderColor = '#222'
+            });
+            grid.style.backgroundColor = '#222'
+        } else {
+            gridColumns.forEach((element) => {
                 element.style.borderColor = '#ddd'
-            }
-        });
+            });
+            gridRows.forEach((element) => {
+                element.style.borderColor = '#ddd'
+            });
+            grid.style.backgroundColor = '#ddd'
+        }
     }
 
     clearBtn.addEventListener("click", () => {
@@ -135,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById(`grid-${j}-${i}`).style.backgroundColor = fillColour
             }
         }
+        send_grid();
     });
 
     eraseBtn.addEventListener("click", () => {
@@ -153,9 +197,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById(`grid-${j}-${i}`).style.backgroundColor = fillColour
             }
         }
+        send_grid();
     });
 
     submitBtn.addEventListener("click", () => {
+        send_grid();
+    });
+
+    const send_grid = () => {
         let grid = []
         for (let i = 0; i < height; i++) {
             grid.push([])
@@ -164,5 +213,5 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
         socket.emit('grid_send', { value: grid });
-    });
+    }
 });
