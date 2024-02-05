@@ -85,6 +85,15 @@ THEMES = {
         'secondary': DARK_PINK,
         'border': False,
     },
+    'hk3' : {
+        'image': 'res/hk3.png',
+        'timepos': (3, 6),
+        'date': True,
+        'datepos': (23, 6),
+        'primary': LIGHT_PINK,
+        'secondary': DARK_PINK,
+        'border': False,
+    },
 }
 
 WIDTH = 64
