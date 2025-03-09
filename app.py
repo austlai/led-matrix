@@ -70,7 +70,7 @@ def toggle_display(data):
     global proc, display_on, brightness, theme, matrix, canvas
     if display_on:
         if proc:
-            subprocess.run(['sudo', 'kill', str(os.getpgid(proc.pid))], check=False)
+            subprocess.run(['kill', str(os.getpgid(proc.pid))], check=False)
             proc = None
             display_on = False
         else:
@@ -122,7 +122,7 @@ def show_grid(data):
 def toggle_grid(data):
     global display_on, proc, canvas, matrix
     if display_on and proc:
-            subprocess.run(['sudo', 'kill', str(os.getpgid(proc.pid))], check=False)
+            subprocess.run(['kill', str(os.getpgid(proc.pid))], check=False)
             proc = None
     if not matrix:
         matrix = RGBMatrix(options = options)
@@ -131,7 +131,7 @@ def toggle_grid(data):
 def display_off():
     global proc, display_on, matrix, canvas
     if proc:
-        subprocess.run(['sudo', 'kill', str(os.getpgid(proc.pid))], check=False)
+        subprocess.run(['kill', str(os.getpgid(proc.pid))], check=False)
         proc = None
     else:
         matrix = None
@@ -140,16 +140,16 @@ def display_off():
 
 def run_clock():
     global proc, theme, brightness, display_on
-    proc = subprocess.Popen(['sudo', '.venv/bin/python3', 'modules/clock.py', '-b', str(brightness), '-t', theme], preexec_fn=os.setpgrp)
+    proc = subprocess.Popen([sys.executable, 'modules/clock.py', '-b', str(brightness), '-t', theme], preexec_fn=os.setpgrp)
     display_on = True
 
 def handle_shutdown():
     global proc
     if proc:
-        subprocess.run(['sudo', 'kill', str(os.getpgid(proc.pid))], check=False)
+        subprocess.run(['kill', str(os.getpgid(proc.pid))], check=False)
 
 if __name__ == '__main__':
     atexit.register(handle_shutdown)
     run_clock()
-    socketio.run(app, debug=False, host='0.0.0.0', port=5000)
+    socketio.run(app, debug=False, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
 

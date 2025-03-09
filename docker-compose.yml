@@ -1,0 +1,11 @@
+services:
+  led-matrix:
+    build: .
+    container_name: "led-matrix"
+    privileged: true
+    volumes: 
+      - .:/usr/src/app
+      - /dev/gpiomem:/dev/gpiomem
+      - /dev/mem:/dev/mem
+    ports: 
+      - 5000:5000
